@@ -1,25 +1,22 @@
 hyperskill_project:
-  id: 97
-  ide_files: https://stepik.org/media/attachments/lesson/308735/additional_files.json
+  id: 98
+  ide_files: https://stepik.org/media/attachments/lesson/308747/additional_files.json
   is_template_based: true
   use_ide: true
-update_date: Mon, 29 Nov 2021 19:02:33 UTC
+update_date: Thu, 01 Jan 1970 00:00:00 UTC
 stages:
-- id: 534
-  step: 8799
+- id: 539
+  step: 8815
   is_completed: true
-- id: 535
-  step: 8800
+- id: 540
+  step: 8816
   is_completed: true
-- id: 536
-  step: 8801
+- id: 541
+  step: 8817
   is_completed: true
-- id: 537
-  step: 8802
-  is_completed: true
-- id: 538
-  step: 8803
-  is_completed: true
+- id: 542
+  step: 8818
+  is_completed: false
 topics:
   0:
   - title: Introduction to Python
@@ -33,36 +30,31 @@ topics:
     theory_id: 5879
   - title: Comments
     theory_id: 6081
-  - title: Taking input
-    theory_id: 5913
   - title: Basic data types
     theory_id: 5852
+  - title: Quotes and multi-line strings
+    theory_id: 5814
+  2:
+  - title: Taking input
+    theory_id: 5913
   - title: Variables
     theory_id: 5859
-  2:
-  - title: Naming variables
-    theory_id: 5885
-  - title: Program with numbers
-    theory_id: 5872
-  - title: Integer arithmetic
-    theory_id: 5865
-  3:
-  - title: If statement
-    theory_id: 5953
-  - title: While loop
-    theory_id: 5940
-  - title: Boolean logic
-    theory_id: 6025
-  - title: Comparisons
-    theory_id: 5920
-  4:
-  - title: Else statement
-    theory_id: 5932
   - title: List
     theory_id: 5979
   - title: Indexes
     theory_id: 6189
-  - title: Invoking a function
-    theory_id: 5891
-  - title: Declaring a function
-    theory_id: 5900
+  3:
+  - title: Naming variables
+    theory_id: 5885
+  - title: Program with numbers
+    theory_id: 5872
+  - title: If statement
+    theory_id: 5953
+  - title: While loop
+    theory_id: 5940
+  - title: Integer arithmetic
+    theory_id: 5865
+  - title: Boolean logic
+    theory_id: 6025
+  - title: Comparisons
+    theory_id: 5920
