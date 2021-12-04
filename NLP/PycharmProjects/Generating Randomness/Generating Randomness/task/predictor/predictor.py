@@ -1,6 +1,4 @@
 import random
-from unittest.mock import patch
-from unittest import TestCase
 
 minimal_length = 100
 start_random_str_len = 3
@@ -8,13 +6,27 @@ allowed_symbols = ["0", "1"]
 triads = ["000", "001", "010", "011", "100", "101", "110", "111"]
 
 
+def print_user_stat(stat_data: dict):
+    # debug function
+    print("triads,0,0 prob, 1, 1 prob ")
+    for key, value in stat_data.items():
+        print("{0},{1},{2},{3},{4}".format(key
+              , value["0"]
+              , value["0_prob"]
+              , value["1"]
+              , value["1_prob"]))
+
+
 def predict_next(triad_list: list, stat_data):
     next_symbol = ""
     triad = "".join(triad_list)
     if stat_data[triad]["0_prob"] > stat_data[triad]["1_prob"]:
         next_symbol = "0"
-    else:
+    elif stat_data[triad]["0_prob"] < stat_data[triad]["1_prob"]:
         next_symbol = "1"
+    else:
+        next_symbol = str(random.randint(0, 1))
+
     return next_symbol
 
 
@@ -44,10 +56,25 @@ def initialize_stat_container():
     return stat_container
 
 
+def update_user_statistic(user_string, stat_container: dict):
+    user_str_len = len(user_string)
+
+    for i in range(0, user_str_len - 2, 1):
+        peace_of_string = user_string[i:i + 4]
+        if len(peace_of_string) == 4:
+            triad_str = peace_of_string[0:3]
+            next_symbol = peace_of_string[3]
+            stat_container[triad_str][next_symbol] = stat_container[triad_str][next_symbol] + 1
+
+    calc_probability(stat_container)
+
+
 def prepare_statistic():
     user_random_str = ""
 
     triads_dic = initialize_stat_container()
+
+    print("Please give AI some data to learn...")
 
     while True:
         user_random_str_part = input("Print a random string containing 0 or 1:")
@@ -58,7 +85,8 @@ def prepare_statistic():
 
         user_str_len = len(user_random_str)
         if user_str_len < minimal_length:
-            print("Current data length is {0}, {1} symbols left".format(user_str_len, minimal_length - user_str_len))
+            print("Current data length is {0}, {1} symbols left".format(user_str_len
+                                                                        , minimal_length - user_str_len))
             continue
         else:
             break
@@ -66,42 +94,73 @@ def prepare_statistic():
     print("Final data string:")
     print(user_random_str)
 
-    for i in range(0, user_str_len - 2, 1):
+    """for i in range(0, user_str_len - 2, 1):
         peace_of_string = user_random_str[i:i + 4]
         if len(peace_of_string) == 4:
             triad_str = peace_of_string[0:3]
             next_symbol = peace_of_string[3]
             triads_dic[triad_str][next_symbol] = triads_dic[triad_str][next_symbol] + 1
 
-    calc_probability(triads_dic)
+    calc_probability(triads_dic)"""
+
+    update_user_statistic(user_random_str, triads_dic)
 
     return triads_dic
 
 
-def user_input_prediction():
-
-    user_statistic = prepare_statistic()
-
-    test_string = input("Please enter a test string containing 0 or 1:")
-    test_string_len = len(test_string)
-
-    # random_string = random_string()
-    predicted_symbols = [char for char in random_string()]
-    guessed_amount = 0
-    check_len = test_string_len - start_random_str_len
-
-    for i in range(3, test_string_len, 1):
-        next_symbol = predict_next(predicted_symbols[i - 3:i], user_statistic)
-        predicted_symbols.append(next_symbol)
-        if next_symbol == test_string[i]:
-            guessed_amount += 1
-
-    print("prediction:")
-    print("".join(predicted_symbols))
-
-    print("Computer guessed right {guessed} out of {length} symbols ({rate} %)".format(guessed=str(guessed_amount)
-          , length=check_len
-          , rate=100 * round(guessed_amount / check_len, 2) if check_len > 0 else 0))
+def print_rules(player_balance):
+    print("""You have ${0}. Every time the system successfully predicts your next press, you lose $1.
+    Otherwise, you earn $1. Print \"enough\" to leave the game. Let's go!""".format(str(player_balance)))
 
 
-user_input_prediction()
+def start_game():
+
+    player_statistic = prepare_statistic()
+    # print_user_stat(user_statistic)
+    player_balance = 1000
+
+    print_rules(player_balance)
+
+    while True:
+
+        print("Print a random string containing 0 or 1:")
+        player_string = input()
+
+        if player_string == "enough":
+            # end game
+            break
+
+        player_string_len = len(player_string)
+        player_string_symbols = [char for char in player_string if char in allowed_symbols]
+
+        if player_string_len != len(player_string_symbols):
+            # Wrong string. Try again
+            continue
+
+        predicted_symbols = [char for char in random_string()]
+        guessed_amount = 0
+        check_len = player_string_len - start_random_str_len
+
+        for i in range(3, player_string_len, 1):
+            next_symbol = predict_next(player_string_symbols[i - 3:i], player_statistic)
+            predicted_symbols.append(next_symbol)
+            if next_symbol == player_string[i]:
+                guessed_amount += 1
+
+        update_user_statistic(player_string, player_statistic)
+
+        print("prediction:")
+        print("".join(predicted_symbols))
+
+        print("Computer guessed right {guessed} out of {length} symbols ({rate} %)".format(guessed=str(guessed_amount)
+              , length=check_len
+              , rate=round(100 * guessed_amount / check_len, 2) if check_len > 0 else 0))
+
+        # Result:               Player won              Computer guessed
+        player_balance += (check_len - guessed_amount) - guessed_amount
+        print("Your balance is now ${0}".format(str(player_balance)))
+
+    print("Game over!")
+
+
+start_game()
